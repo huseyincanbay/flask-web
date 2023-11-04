@@ -1,4 +1,3 @@
-#burası uygulamayı yarattığımız, ve rotaları vs. çağırabileceğimiz yer
 from flask import Flask 
 from flask_sqlalchemy import SQLAlchemy
 from os import path
@@ -21,5 +20,4 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-# The changes have been saved to the database
     return app
