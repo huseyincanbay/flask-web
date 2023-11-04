@@ -7,7 +7,7 @@
 <body>
     <h1>Create Meeting</h1>
     
-    <form action="/new-meeting" method="POST">
+    <form action="/meeting" method="POST">
         <label for="subject">Subject:</label>
         <input type="text" id="subject" name="subject" required><br><br>
         
@@ -20,13 +20,13 @@
         <label for="end_time">End Time:</label>
         <input type="time" id="end_time" name="end_time" required><br><br>
         
-        <label for="participants">Participants:</label>
-        <select id="participants" name="participants" class="form-field" required>
-            <option value="" disabled selected>Select Participants</option>
+        <label for="participants">Participants (select multiple):</label>
+        <select id="participants" name="participants" class="form-field" required multiple>
             {% for participant in participants %}
                 <option value="{{ participant.id }}">{{ participant.name }}</option>
             {% endfor %}
         </select><br><br>
+        
         
         <input type="submit" value="Create Meeting">
     </form>

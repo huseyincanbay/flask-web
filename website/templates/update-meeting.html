@@ -21,9 +21,8 @@
         <label for="end_time">End Time:</label>
         <input type="time" id="end_time" name="end_time" value="{{ meeting.end_time }}" required><br><br>
         
-        <label for="participants">Participants:</label>
-        <select id="participants" name="participants" class="form-field" required>
-            <option value="" disabled selected>Select Participants</option>
+        <label for="participants">Participants (select multiple):</label>
+        <select id="participants" name="participants" class="form-field" required multiple>
             {% for participant in participants %}
                 <option value="{{ participant.id }}">{{ participant.name }}</option>
             {% endfor %}

@@ -12,7 +12,7 @@ def list_meetings():
     return render_template('list-meetings.html', meetings=meetings)
 
 # Create a new meeting route
-@views.route('/new-meeting', methods=['GET', 'POST'])
+@views.route('/meeting', methods=['GET', 'POST'])
 def create_meeting():
     if request.method == 'POST':
         subject = request.form.get('subject')
@@ -43,6 +43,7 @@ def create_meeting():
 
     participants = Participant.query.all()
     return render_template('create-meeting.html', participants=participants)
+
 
 #Get a meeting by id
 @views.route('/meeting/<int:id>', methods=['GET'])
