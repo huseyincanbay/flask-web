@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Meeting</title>
+    <link rel="stylesheet" type="text/css" href="/static/form.css">
+</head>
+<body>
+    <h1>Update Meeting</h1>
+    
+    <form action="{{ url_for('views.update_meeting', id=meeting.id) }}" method="POST">
+        
+        <label for="subject">Subject:</label>
+        <input type="text" id="subject" name="subject" value="{{ meeting.subject }}" required><br><br>
+        
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" value="{{ meeting.date }}" required><br><br>
+        
+        <label for="start_time">Start Time:</label>
+        <input type="time" id="start_time" name="start_time" value="{{ meeting.start_time }}" required><br><br>
+        
+        <label for="end_time">End Time:</label>
+        <input type="time" id="end_time" name="end_time" value="{{ meeting.end_time }}" required><br><br>
+        
+        <label for="participants">Participants:</label>
+        <select id="participants" name="participants" class="form-field" required>
+            <option value="" disabled selected>Select Participants</option>
+            {% for participant in participants %}
+                <option value="{{ participant.id }}">{{ participant.name }}</option>
+            {% endfor %}
+        </select><br><br>
+        
+        <input type="submit" class="button" value="Update Meeting">
+    </form>
+</body>
+</html>

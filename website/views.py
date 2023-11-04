@@ -1,145 +1,174 @@
-from flask import Blueprint
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for
 from .models import Meeting, Participant
 from flask import request, jsonify
 from . import db
 
-api = Blueprint('api', __name__)
+views = Blueprint('views', __name__)
 
-#Get all meetings
-@api.route('/meetings', methods = ['GET'])
-def get_meetings():
+
+# Get all meetings route
+@views.route('/meetings', methods=['GET'])
+def list_meetings():
     meetings = Meeting.query.all()
-    meeting_data = [{"id": meeting.id, "subject": meeting.subject} for meeting in meetings]
-    return jsonify(meeting_data)
+    return render_template('list-meetings.html', meetings=meetings)
 
-#Create a meeting
-@api.route('/meetings', methods = ['POST'])
+# Create a new meeting route
+@views.route('/new-meeting', methods=['GET', 'POST'])
 def create_meeting():
-    data = request.get_json()
-    if not data or 'subject' not in data or 'date' not in data or 'start_time' not in data or 'end_time' not in data:
-        return jsonify({"message" : "Incomplete data"}), 400
-    
-    new_meeting = Meeting(
-        subject = data['subject'],
-        date = data['date'],
-        start_time = data['start_time'],
-        end_time = data['end_time']
-    )
-    
-    db.session.add(new_meeting)
-    db.session.commit()
-    
-    return jsonify({"message": "Meeting created successfully", "id": new_meeting.id}), 201
+    if request.method == 'POST':
+        subject = request.form.get('subject')
+        date = request.form.get('date')
+        start_time = request.form.get('start_time')
+        end_time = request.form.get('end_time')
+        participants = request.form.getlist('participants')
+
+        if not subject or not date or not start_time or not end_time:
+            return jsonify({"message": "Entries are not completed!"}), 400
+
+        new_meeting = Meeting(
+            subject=subject,
+            date=date,
+            start_time=start_time,
+            end_time=end_time
+        )
+
+        if participants:
+            participant_ids = [int(id) for id in participants]
+            participants = Participant.query.filter(Participant.id.in_(participant_ids)).all()
+            new_meeting.participants = participants
+
+        db.session.add(new_meeting)
+        db.session.commit()
+
+        return redirect(url_for('views.create_meeting'))
+
+    participants = Participant.query.all()
+    return render_template('create-meeting.html', participants=participants)
 
 #Get a meeting by id
-@api.route('/meetings/<int:id>', methods = ['GET'])
+@views.route('/meeting/<int:id>', methods=['GET'])
 def get_meeting(id):
     meeting = Meeting.query.get(id)
     if not meeting:
-        return jsonify({"message" : "No meeting found"}), 404
-    
-    #Get participants for the meeting
-    participants = [{"id": participant.id, "name": participant.name, "email": participant.email} for participant in meeting.participants]
-    
-    meeting_data = {
-        "id": meeting.data,
-        "subject": meeting.subject,
-        "date": str(meeting.date),
-        "start_time": str(meeting.start_time),
-        "end_time": str(meeting.end_time),
-        "participants": participants
-        }
-    
-    return jsonify(meeting_data), 200
+        return jsonify({"message": "Meeting not found!"}), 404
 
-@api.route('/meetings/<int:id>', methods = ['PUT'])
+    participants = Participant.query.all()
+
+    return render_template('update-meeting.html', meeting=meeting, participants=participants)
+
+#Update a meeting by id
+@views.route('/update-meeting/<int:id>', methods=['GET', 'POST'])
 def update_meeting(id):
-    data = request.get_json()
     meeting = Meeting.query.get(id)
-    
+
     if not meeting:
-        return jsonify({"message": "No meeting found"}), 404
-    
-    if data and 'subject' in data:
-        meeting.subject = data['subject']
-    if data and 'date' in data:
-        meeting.date = data['date']
-    if data and 'start_time' in data:
-        meeting.start_time = data['start_time']
-    if data and 'end_time' in data:
-        meeting.end_time = data['end_time']
-    
-    db.session.commit()
-    
-    return jsonify({"message": "Meeting updated successfully"}), 200
+        return jsonify({"message": "Meeting not found!"}), 404
+
+    participants = Participant.query.all()  
+
+    if request.method == 'POST':
+        subject = request.form.get('subject')
+        date = request.form.get('date')
+        start_time = request.form.get('start_time')
+        end_time = request.form.get('end_time')
+        participants_selected = request.form.getlist('participants')
+
+        if not subject or not date or not start_time or not end_time:
+            return jsonify({"message": "Entries are not completed!"}), 400
+
+        if subject:
+            meeting.subject = subject
+        if date:
+            meeting.date = date
+        if start_time:
+            meeting.start_time = start_time
+        if end_time:
+            meeting.end_time = end_time
+
+        if participants_selected:
+            participant_ids = [int(id) for id in participants_selected]
+            participants = Participant.query.filter(Participant.id.in_(participant_ids)).all()
+
+            meeting.participants = participants
+
+        db.session.commit()
+
+        return redirect(url_for('views.list_meetings', id=meeting.id))
+
+    return render_template('update-meeting.html', meeting=meeting, participants=participants)
+
+
 
 #Delete a Meeting
-@api.route('/meetings/<int:id>', methods = ['DELETE'])
-def update_meeting(id):
+@views.route('/meetings/<int:id>', methods=['POST'])
+def delete_meeting(id):
     meeting = Meeting.query.get(id)
-    
+
     if not meeting:
-        return jsonify({"message": "No meeting found"}), 404
-    
+        return jsonify({"message": "Meeting not found!"}), 404
+
     db.session.delete(meeting)
     db.session.commit()
-    
-    return jsonify({"message": "Meeting deleted successfully"}), 200
-    
-#Get all participants
-@api.route('/participants', methods = ['GET'])
-def get_participants():
-    participants = Participant.query.all()
-    participant_data = [{"id": participant.id, "name": participant.name, "email": participant.email} for participant in participants]
-    return jsonify(participant_data)
+
+    return redirect(url_for('views.list_meetings'))
 
 #Create a participant
-@api.route('/participants', methods = ['POST'])
+@views.route('/participant', methods=['GET', 'POST'])
 def create_participant():
-    data = request.get_json()
-    if not data or 'name' not in data or 'email' not in data or 'meeting_id' not in data:
-        return jsonify({"message": "Incomplete participant"}), 400
-    
-    new_participant = Participant(
-        name = data['name'],
-        email = data['email'],
-        meeting_id = data['meeting_id']
-    )
-    
-    db.session.add(new_participant)
-    db.session.commit()
-    
-    return jsonify({"message": "New participant created successfully", "id": new_participant.id}), 201
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+
+        if not name or not email:
+            return jsonify({"message": "Entries are not completed!"}), 400
+
+        new_participant = Participant(
+            name=name,
+            email=email,
+        )
+
+        db.session.add(new_participant)
+        db.session.commit()
+
+        return redirect(url_for('views.create_participant'))
+
+    meetings = Meeting.query.all()
+    return render_template('create-participant.html', meetings=meetings)
 
 #Update a participant
-@api.route('/participants/<int:id>', methods = ['PUT'])
+@views.route('/participant/<int:id>', methods=['PUT'])
 def update_participant(id):
-    data = request.get_json()
     participant = Participant.query.get(id)
-    
+
     if not participant:
-        return jsonify({"message": "Participant not found"}), 404
-    
-    if data and 'name' in data:
-        participant.name = data['name']
-    if data and 'email' in data:
-        participant.email = data['email']
-    if data and 'meeting_id' in data:
-        participant.meeting_id = data['meeting_id']
-    
-    db.session.commit()
-    
-    return jsonify({"message": "Participant Updated Successfully"}), 200
+        return jsonify({"message": "Cannot find the participant"}, 404)
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+
+        if not name or not email:
+            return jsonify({"message": "Entries are not completed!"}, 400)
+
+        participant.name = name
+        participant.email = email
+
+        db.session.commit()
+
+        return redirect(url_for('views.update_participant', id=id))
+
+    meetings = Meeting.query.all() 
+    return render_template('update-participant.html', participant=participant)
 
 #Delete a participant
-@api.route('/participants/<int:id>', methods = ['DELETE'])
+@views.route('/participant/<int:id>', methods=['DELETE'])
 def delete_participant(id):
     participant = Participant.query.get(id)
-    
+
     if not participant:
-        return jsonify({"message": "participant not found"}), 404
-    
+        return jsonify({"message": "Cannot find the participant"}, 404)
+
     db.session.delete(participant)
     db.session.commit()
-    
-    return jsonify({"message": "Participant deleted successfully"}), 200
+
+    return redirect(url_for('views.participants'))

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Meeting List</title>
+    <link rel="stylesheet" type="text/css" href="/static/home.css" />
+  </head>
+  <body>
+    <h1>Meeting List</h1>
+
+    <ul>
+      {% for meeting in meetings %}
+      <li>
+        <strong>Subject:</strong> {{ meeting.subject }}<br />
+        <strong>Date:</strong> {{ meeting.date }}<br />
+        <strong>Start Time:</strong> {{ meeting.start_time }}<br />
+        <strong>End Time:</strong> {{ meeting.end_time }}<br />
+        <strong>Participants:</strong>
+        <ul>
+          {% for participant in meeting.participants %}
+          <li>{{ participant.name }} ({{ participant.email }})</li>
+          {% endfor %}
+        </ul>
+        <a href="{{ url_for('views.update_meeting', id=meeting.id) }}"
+          ><button>Update</button></a
+        >
+        <form
+          action="{{ url_for('views.delete_meeting', id=meeting.id) }}"
+          method="POST"
+        >
+          <input type="hidden" name="_method" value="DELETE" />
+          <button type="submit" class="delete-button">Delete</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

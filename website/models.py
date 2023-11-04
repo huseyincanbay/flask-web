@@ -6,7 +6,7 @@ class Meeting(db.Model):
     date = db.Column(db.Date, nullable=False)
     start_time = db.Column(db.Time, nullable = False)
     end_time = db.Column(db.Time, nullable = False)
-    participants = db.relationship('Participant', backref = 'meeting', lazy = True)
+    participants = db.relationship('Participant', backref = 'meeting', lazy = True, cascade='all, delete-orphan')
 
 class Participant(db.Model):
     id = db.Column(db.Integer, primary_key = True)

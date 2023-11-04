@@ -1,0 +1,87 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    color: #555;
+    padding: 10px;
+}
+
+form {
+    background-color: #fff;
+    margin: 10px auto;
+    padding: 50px;
+    width: 100%;
+    max-width: 500px;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 5px #ccc;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="email"],
+input[type="time"] {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+input[type="submit"] {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+input[type="submit"]:hover {
+    background-color: #555;
+}
+
+select.form-field {
+    width: 100%;
+    margin: 5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #fff;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+select.form-field:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px #007bff;
+}
+
+select.form-field option {
+    font-size: 16px;
+    background-color: #fff;
+    color: #333;
+}
+
+select.form-field option:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+select.form-field option[disabled] {
+    color: #888;
+}
+
