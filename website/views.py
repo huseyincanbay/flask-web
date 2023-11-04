@@ -5,7 +5,6 @@ from . import db
 
 views = Blueprint('views', __name__)
 
-
 # Get all meetings route
 @views.route('/meetings', methods=['GET'])
 def list_meetings():
@@ -96,8 +95,6 @@ def update_meeting(id):
         return redirect(url_for('views.list_meetings', id=meeting.id))
 
     return render_template('update-meeting.html', meeting=meeting, participants=participants)
-
-
 
 #Delete a Meeting
 @views.route('/meetings/<int:id>', methods=['POST'])
