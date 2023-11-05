@@ -79,4 +79,32 @@
     button.delete-button:active {
         background-color: #b30000;
     }
-    
+
+nav {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .nav-left a,
+  .nav-right a {
+    text-decoration: none;
+    color: #fff;
+    margin: 0 10px;
+    font-weight: bold;
+  }
+  
+  .nav-left a:hover,
+  .nav-right a:hover {
+    color: #66d8ff;
+  }
+  
