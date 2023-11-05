@@ -2,11 +2,13 @@ from flask import Blueprint, render_template, request, jsonify, redirect, url_fo
 from .models import Meeting, Participant
 from flask import request, jsonify
 from . import db
+from flask_login import login_required, current_user
 
 views = Blueprint('views', __name__)
 
 # Get all meetings route
 @views.route('/meetings', methods=['GET'])
+@login_required
 def list_meetings():
     meetings = Meeting.query.all()
     return render_template('list-meetings.html', meetings=meetings)
