@@ -20,7 +20,7 @@ This is a basic web application that designed to facilitate the management of me
 - **Jinja2**: Jinja2 templating engine is used for rendering HTML templates.
 - **HTML/CSS**: Front-end elements are built using HTML, styled with CSS.
 - **MySQL Database**: MySQL is used as the database to store meeting and participant data.
-**Alembic**: Alembic is used for database migrations to manage schema changes.
+- **Alembic**: Alembic is used for database migrations to manage schema changes.
 
 ## Packages Used
 
