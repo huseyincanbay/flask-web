@@ -46,7 +46,7 @@ def sign_up():
             flash('Email already exists.', category='error')
         elif len(email) < 4:
             flash('Email must be greater than 3 characters.', category='error')
-        elif not username:  # Check if username is an empty string
+        elif not username:
             flash('Username must be provided.', category='error')
         elif password1 != password2:
             flash('Passwords don\'t match.', category='error')
